@@ -1,8 +1,17 @@
+(*
+
+Range of CJK unified ideographs:
+http://jrgraphix.net/research/unicode_blocks.php
+
+*)
 open System
 
 let random = Random()
-let nums = [for i in [1..8] -> random.Next(1, 100) ]
-printfn "Using list comprehension: %A" nums
+let randomInt a b = random.Next(a, b + 1)
+let randomHanzi () = randomInt 0x4e00 0x9fff |> Convert.ToChar
 
-let nums2 = List.init 8 (fun i -> random.Next(1, 100))
-printfn "Using List.init function: %A" nums2
+
+let chars = [for i in [1..8] -> randomHanzi () ]
+printfn "Using list comprehension: %A" chars
+let chars2 = List.init 8 (fun i -> randomHanzi () )
+printfn "Using List.init function: %A" chars2
