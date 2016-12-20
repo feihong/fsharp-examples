@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<response>
+  <data>
+    <images>
+      <image>
+        <url>http://25.media.tumblr.com/tumblr_m1qjspLYr61qgjltdo1_1280.jpg</url>
+        <id>c4u</id>
+        <source_url>http://thecatapi.com/?id=c4u</source_url>
+      </image>
+      <image>
+        <url>http://25.media.tumblr.com/tumblr_m420iwCCF21qbd47zo1_1280.jpg</url>
+        <id>cov</id>
+        <source_url>http://thecatapi.com/?id=cov</source_url>
+      </image>
+    </images>
+  </data>
+</response>
