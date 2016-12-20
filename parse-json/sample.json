@@ -1,0 +1,34 @@
+[
+  {
+    "page": 1,
+    "per_page": "50",
+    "pages": 1,
+    "total": 1
+  },
+  [
+    {
+      "latitude": "40.0495",
+      "name": "China",
+      "lendingType": {
+        "value": "IBRD",
+        "id": "IBD"
+      },
+      "id": "CHN",
+      "adminregion": {
+        "value": "East Asia & Pacific (excluding high income)",
+        "id": "EAP"
+      },
+      "region": {
+        "value": "East Asia & Pacific",
+        "id": "EAS"
+      },
+      "longitude": "116.286",
+      "incomeLevel": {
+        "value": "Upper middle income",
+        "id": "UMC"
+      },
+      "capitalCity": "Beijing",
+      "iso2Code": "CN"
+    }
+  ]
+]
