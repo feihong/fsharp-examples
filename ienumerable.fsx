@@ -3,7 +3,7 @@ open System.Collections
 open System.Collections.Generic
 
 type MyCollection<'T>() =
-  let mutable list : 'T list = []
+  let mutable list: 'T list = []
 
   member this.Add n =
     list <- List.append list [n]
