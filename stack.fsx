@@ -31,6 +31,9 @@ type Stack<'T>() =
       | None -> ()
     }
 
+  member this.Count
+    with get() = count
+
   member this.IsEmpty
     with get() = count = 0
 
@@ -67,3 +70,5 @@ stack.Push 3
 
 for n in stack do
   printfn "%d" n
+
+printfn "%A" stack   // seq [3; 2; 1]
