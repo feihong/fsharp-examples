@@ -8,27 +8,23 @@ open System
 open System.Collections
 open System.Collections.Generic
 
-type Node<'T> = {
-  Value: 'T;
-  Tail: Node<'T> option;
-}
 
-//type 'a ImmutableStack =
-//  | Empty
-//  | StackNode of 'a * 'a ImmutableStack
+type 'a ImmutableStack =
+  | Empty
+  | StackNode of 'a * 'a ImmutableStack
 
 
 type Stack<'T>() =
-  let mutable head: Node<'T> option = None
+  let mutable head = Empty
   let mutable count = 0
 
   let rec traverse head =
     seq {
       match head with
-      | Some node ->
-        yield node.Value
-        yield! traverse node.Tail
-      | None -> ()
+      | StackNode(hd, tl) ->
+        yield hd
+        yield! traverse tl
+      | Empty -> ()
     }
 
   member this.Count
@@ -39,19 +35,15 @@ type Stack<'T>() =
 
   member this.Push item =
     count <- count + 1
-    match head with
-    | Some node ->
-      head <- Some {Value = item; Tail = Some node}
-    | None ->
-      head <- Some {Value = item; Tail = None}
+    head <- StackNode(item, head)
 
   member this.Pop() =
     match head with
-    | Some node ->
-      head <- node.Tail
+    | StackNode(hd, tl) ->
       count <- count - 1
-      Some node.Value
-    | None -> None
+      head <- tl
+      Some hd
+    | Empty -> None
 
   interface IEnumerable<'T> with
     member this.GetEnumerator() =
