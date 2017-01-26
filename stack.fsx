@@ -31,6 +31,9 @@ type Stack<'T>() =
       | None -> ()
     }
 
+  member this.IsEmpty
+    with get() = count = 0
+
   member this.Push item =
     count <- count + 1
     match head with
