@@ -72,6 +72,42 @@ type DoublyLinkedList<'T>() =
       Some rearRecord.Value
     | _ -> None
 
+  member this.PushFront newValue =
+    match list with
+    | Empty ->
+      list <- Single newValue
+    | Single v ->
+      let frontRecord = {Left = Front; Value = newValue; Right = Placeholder}
+      let front = Node frontRecord
+      let rear = Node {Left = front; Value = v; Right = End}
+      frontRecord.Right <- rear
+      list <- List (front, rear)
+    | List ((Node frontRecord as front), rear) ->
+      let newFront = Node {Left = Front; Value = newValue; Right = front}
+      frontRecord.Left <- newFront
+      list <- List (newFront, rear)
+    | _ -> ()
+
+  member this.PopFront() =
+    match list with
+    | Empty ->
+      None
+    | Single v ->
+      list <- Empty
+      Some v
+    | List (Node frontRecord, rear) ->
+      match frontRecord.Right with
+      | Node ({Right = End} as record) ->
+        // The second node is the last node.
+        list <- Single record.Value
+      | Node record as newFront ->
+        // Make second node the front node.
+        record.Left <- Front
+        list <- List (newFront, rear)
+      | _ -> ()
+      Some frontRecord.Value
+    | _ -> None
+
   interface IEnumerable<'T> with
     member this.GetEnumerator() =
       let s = traverse list
@@ -83,10 +119,18 @@ type DoublyLinkedList<'T>() =
 
 
 let dlist = new DoublyLinkedList<string>()
-dlist.Push "a"
-dlist.Push "b"
-dlist.Push "c"
-dlist.Push "d"
-printfn "%A" dlist
+for s in ["a"; "b"; "c"] do
+  dlist.Push s
+printfn "After pushing: %A" dlist
+
 for i in [1..4] do
   printfn "Popped [%A]" <| dlist.Pop()
+printfn "After popping: %A" dlist
+
+for s in ["a"; "b"; "c"; "d"] do
+  dlist.PushFront s
+printfn "After pushing to the front: %A" dlist
+
+for i in [1..5] do
+  printfn "Popped [%A] from front" <| dlist.PopFront()
+printfn "After popping from the front: %A" dlist
