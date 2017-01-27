@@ -76,10 +76,10 @@ type Queue<'T>() =
 
 
 let queue = new Queue<int>()
-for i in [1; 2; 3] do
+for i in [1; 2; 3; 4] do
   queue.Enqueue i
 printfn "After enqueuing: %A" queue
 
-for i in [1..4] do
+for i in [1..5] do
   printfn "Dequeued [%A]" <| queue.Dequeue()
 printfn "After dequeuing: %A" queue

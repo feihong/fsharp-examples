@@ -61,9 +61,9 @@ type DoublyLinkedList<'T>() =
       Some v
     | List (front, (Node rearRecord as rear)) ->
       match rearRecord.Left with
-      | Node ({Left = Front} as record) ->
-        // In this case, second-to-last node is actually the front node.
-        list <- Single record.Value
+      | Node {Left = Front; Value = v} ->
+        // There are only 2 nodes, so convert to a single value.
+        list <- Single v
       | Node record as newRear ->
         // Make second-to-last node the rear node.
         record.Right <- End
@@ -97,9 +97,9 @@ type DoublyLinkedList<'T>() =
       Some v
     | List (Node frontRecord, rear) ->
       match frontRecord.Right with
-      | Node ({Right = End} as record) ->
-        // The second node is the last node.
-        list <- Single record.Value
+      | Node {Right = End; Value = v} ->
+        // There are only 2 nodes, so convert to single value.
+        list <- Single v
       | Node record as newFront ->
         // Make second node the front node.
         record.Left <- Front
