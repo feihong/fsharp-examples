@@ -2,19 +2,17 @@ open System.Collections
 open System.Collections.Generic
 
 
-type 'a Node =
+type 'a DLNode =
   | Placeholder
-  | Front of 'a FrontInfo
-  | Middle of 'a MiddleInfo
-  | Rear of 'a RearInfo
-and 'a FrontInfo = {Value: 'a; mutable Right: 'a Node}
-and 'a MiddleInfo = {mutable Left: 'a Node; Value: 'a; mutable Right: 'a Node}
-and 'a RearInfo = {mutable Left: 'a Node; Value: 'a;}
+  | Front
+  | End
+  | Node of 'a NodeInfo
+and 'a NodeInfo = {mutable Left: 'a DLNode; Value: 'a; mutable Right: 'a DLNode}
 
 type 'a DLList =
   | Empty
   | Single of 'a
-  | List of 'a Node * 'a Node     // front and rear nodes
+  | List of 'a DLNode * 'a DLNode     // front and rear nodes
 
 
 type DoublyLinkedList<'T>() =
@@ -23,15 +21,11 @@ type DoublyLinkedList<'T>() =
   let rec traverseNode node =
     seq {
       match node with
-      | Placeholder -> ()
-      | Front record ->
+      | End -> ()
+      | Node record ->
         yield record.Value
         yield! traverseNode record.Right
-      | Middle record ->
-        yield record.Value
-        yield! traverseNode record.Right
-      | Rear record ->
-        yield record.Value
+      | _ -> ()
     }
 
   let rec traverse list =
@@ -48,43 +42,34 @@ type DoublyLinkedList<'T>() =
     | Empty ->
       list <- Single newValue
     | Single v ->
-      let (frontRecord : 'T FrontInfo) = {Value = v; Right = Placeholder}
-      let front = Front frontRecord
-      let rear = Rear {Value = newValue; Left = front}
+      let frontRecord = {Left = Front; Value = v; Right = Placeholder}
+      let front = Node frontRecord
+      let rear = Node {Left = front; Value = newValue; Right = End}
       frontRecord.Right <- rear
       list <- List (front, rear)
-    | List(front, Rear rearRecord) ->
-      // Turn old rear node into middle node.
-      let middleRecord = {Value = rearRecord.Value;
-                          Left = rearRecord.Left;
-                          Right = Placeholder}
-      let middle = Middle middleRecord
-      let newRear = Rear {Value = newValue; Left = middle}
-      middleRecord.Right <- newRear
-      match middleRecord.Left with
-      | Front record -> record.Right <- middle
-      | Middle record -> record.Right <- middle
-      | _ -> ()
+    | List (front, (Node rearRecord as rear)) ->
+      let newRear = Node {Left = rear; Value = newValue; Right = End}
+      rearRecord.Right <- newRear
       list <- List (front, newRear)
     | _ -> ()
 
-  member this.PopFront() =
+  member this.Pop() =
     match list with
-    | Empty ->
-      None
+    | Empty -> None
     | Single v ->
       list <- Empty
       Some v
-    | List(Front frontRecord, rear) ->
-      match frontRecord.Right with
-      | Rear record ->
+    | List (front, (Node rearRecord as rear)) ->
+      match rearRecord.Left with
+      | Node ({Left = Front} as record) ->
+        // In this case, second-to-last node is actually the front node.
         list <- Single record.Value
-      | Middle record ->
-        // Turn a middle node into a front node.
-        let front = Front {Value = record.Value; Right = record.Right}
-        list <- List (front, rear)
+      | Node record as newRear ->
+        // Make second-to-last node the rear node.
+        record.Right <- End
+        list <- List (front, newRear)
       | _ -> ()
-      Some frontRecord.Value
+      Some rearRecord.Value
     | _ -> None
 
   interface IEnumerable<'T> with
@@ -104,4 +89,4 @@ dlist.Push "c"
 dlist.Push "d"
 printfn "%A" dlist
 for i in [1..4] do
-  printfn "Popped [%A] from front" <| dlist.PopFront()
+  printfn "Popped [%A]" <| dlist.Pop()
